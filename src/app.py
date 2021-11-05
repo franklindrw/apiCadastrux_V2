@@ -42,12 +42,12 @@ def verificarUsuario(usuario, senha):
 def listarProdutos():
     try:
         cursor = conexao.connection.cursor()
-        sql="SELECT IDPRODUTO, PRODNOME, DESCRICAO, IMAGEM FROM PRODUTOS"
+        sql="SELECT IDPRODUTO, PRODNOME, DESCRICAO, IMAGEM, CATEGORIA FROM PRODUTOS"
         cursor.execute(sql)
         dados = cursor.fetchall()
         produtos = []
         for linha in dados:
-            produto = {'id':linha[0], 'produto':linha[1], 'descricao':linha[2], 'imagem':linha[3]}
+            produto = {'id':linha[0], 'produto':linha[1], 'descricao':linha[2], 'imagem':linha[3], 'categoria':linha[4]}
             produtos.append(produto)        
         return jsonify({'produtos': produtos})
     except Exception as ex:
