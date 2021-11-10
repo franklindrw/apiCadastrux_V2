@@ -57,12 +57,12 @@ def verificarUsuario(usuario, senha):
 def listarOutdoor():
     try:
         cursor = conexao.connection.cursor()
-        sql="SELECT IDPRODUTO, PRODNOME, DESCRICAO, IMAGEM, CATEGORIA FROM PRODUTOS"
+        sql="SELECT P.IDPRODUTO, P.PRODNOME, P.DESCRICAO, PRE.PRECO, P.CATEGORIA, P.IMAGEM FROM PRODUTOS P INNER JOIN precos pre ON PRE.ID_PRODUTO = P.IDPRODUTO"
         cursor.execute(sql)
         dados = cursor.fetchall()
         produtos = []
         for linha in dados:
-            produto = {'id':linha[0], 'produto':linha[1], 'descricao':linha[2], 'imagem':linha[3], 'categoria':linha[4]}
+            produto = {'id':linha[0], 'produto':linha[1], 'descricao':linha[2], 'preco':linha[3], 'categoria':linha[4], 'imagem':linha[5]}
             produtos.append(produto)
         return jsonify({'produtos': produtos})
     except Exception as ex:
