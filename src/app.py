@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from config import config
 from flask_mysqldb import MySQL
 
@@ -24,6 +24,7 @@ def listarUsuarios():
     except Exception as ex:
         return jsonify({'mesagem':"Nenhuma informação encontrada"})
 
+
 # pesquisa um usuario especifico
 @app.route('/usuarios/<usuario>/<senha>', methods=['GET'])
 def verificarUsuario(usuario, senha):
@@ -40,16 +41,28 @@ def verificarUsuario(usuario, senha):
     except Exception as ex:
         return jsonify({'mensagem':"Erro ao consultar na API"})
 
-# cadastra um novo usuario
-# @app.route('/usuarios', methods=['POST'])
-# def criaUsuario():
-#     body = request.get_json()
 
-#     cursor = conexao.connection.cursor()
-#     sql = "INSERT INTO USUARIOS (USUARIO, SENHA) VALUES ('{0}', '{1}')".format(usuario, senha)
+# @app.route('/usuarios/criar/<dados>', methods=['GET','POST'])
+# def criaUsuario(dados):
+#     try:
+#         cursor = conexao.connection.cursor()
+#         sql = "INSERT INTO USUARIOS (USUARIO, SENHA) VALUES ('{0}')".format(dados)
+#         cursor.execute(sql)
+#         conexao.connection.commit()
+#         return 'dados gravados!'
+#     except Exception as ex:
+#         return jsonify({'mensagem':"Erro ao consultar na API"})
 
-    
-#     usuario = Usuario(usuario=body["usuario"], senha=body["senha"])
+@app.route('/usuarios/criar/<usuario>/<senha>', methods=['POST'])
+def criarCadastro(usuario, senha):
+    try:
+        cursor = conexao.connection.cursor()
+        sql = "INSERT INTO USUARIOS (USUARIO, SENHA, STATUS) VALUES ('{0}', '{1}', 'True')".format(usuario, senha)
+        cursor.execute(sql)
+        conexao.connection.commit()
+        return 'dados gravados!'
+    except Exception as ex:
+        return jsonify({'mensagem':"Erro ao consultar na API"})
 
 
 # Produtos
