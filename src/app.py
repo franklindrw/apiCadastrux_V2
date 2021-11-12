@@ -42,17 +42,7 @@ def verificarUsuario(usuario, senha):
         return jsonify({'mensagem':"Erro ao consultar na API"})
 
 
-# @app.route('/usuarios/criar/<dados>', methods=['GET','POST'])
-# def criaUsuario(dados):
-#     try:
-#         cursor = conexao.connection.cursor()
-#         sql = "INSERT INTO USUARIOS (USUARIO, SENHA) VALUES ('{0}')".format(dados)
-#         cursor.execute(sql)
-#         conexao.connection.commit()
-#         return 'dados gravados!'
-#     except Exception as ex:
-#         return jsonify({'mensagem':"Erro ao consultar na API"})
-
+# cria usuario
 @app.route('/usuarios/criar/<usuario>/<senha>', methods=['POST'])
 def criarCadastro(usuario, senha):
     try:
@@ -60,9 +50,33 @@ def criarCadastro(usuario, senha):
         sql = "INSERT INTO USUARIOS (USUARIO, SENHA, STATUS) VALUES ('{0}', '{1}', 'True')".format(usuario, senha)
         cursor.execute(sql)
         conexao.connection.commit()
-        return 'dados gravados!'
+        return 'usuário cadastrado!'
     except Exception as ex:
         return jsonify({'mensagem':"Erro ao consultar na API"})
+
+# atualizar senha
+@app.route('/usuarios/update/<senha>/<idUsuario>', methods=['PUT'])
+def atualizarCadastro(senha, idUsuario):
+    try:
+        cursor = conexao.connection.cursor()
+        sql = "update usuarios u set u.SENHA = '{0}' where u.IDUSUARIO = '{1}'".format(senha, idUsuario)
+        cursor.execute(sql)
+        conexao.connection.commit()
+        return 'senha Atualizada!'
+    except Exception as ex:
+        return jsonify({'mensagem':"Erro ao atualizar dados!!!"})
+
+# deletar usuario
+@app.route('/usuarios/delete/<idUsuario>', methods=['DELETE'])
+def deletarCadastro(idUsuario):
+    try:
+        cursor = conexao.connection.cursor()
+        sql = "delete from usuarios where IDUSUARIO = '{0}'".format(idUsuario)
+        cursor.execute(sql)
+        conexao.connection.commit()
+        return 'usuario Deletado'
+    except Exception as ex:
+        return jsonify({'mensagem':"Erro ao atualizar dados!!!"})
 
 
 # Produtos
@@ -83,6 +97,28 @@ def listarOutdoor():
 
 def pagina_nao_encontrada(error):
     return "<h2>A página que está tentando buscar não existe</h2>"
+
+
+# criar produto
+@app.route('/criaProduto/<prodnome>/<desc>/<categoria>/<preco>', methods=['POST'])
+def criarProduto(prodnome, desc, categoria, preco):
+    try:
+        cursor = conexao.connection.cursor()
+        sql = "insert into produtos p (p.PRODNOME, p.DESCRICAO, p.IMAGEM, p.CATEGORIA) values ('{0}', '{1}', null, '{2}')".format(prodnome, desc, categoria)
+        cursor.execute(sql)
+        conexao.connection.commit()
+
+        sql2 = "SELECT IDPRODUTO FROM PRODUTOS ORDER BY IDPRODUTO DESC LIMIT 1"
+        idproduto = cursor.execute(sql2)
+
+        sql3 = "insert into precos p (p.PRECO, p.ID_PRODUTO) values ('{0}', '{1}')".format(preco, idproduto)
+        cursor.execute(sql3)
+        conexao.connection.commit()
+
+
+        return 'produto Cadastrado!'
+    except Exception as ex:
+        return jsonify({'mensagem':"Erro ao consultar na API"})
 
 
 @app.route('/produtos', methods=['GET'])
